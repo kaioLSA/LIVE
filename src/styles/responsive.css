@@ -1,0 +1,95 @@
+/* ========== RESPONSIVE OVERRIDES ========== */
+
+/* Navbar responsive */
+@media (max-width: 768px) {
+  nav > div > div:nth-child(2) {
+    display: none !important;
+  }
+  nav > div > a:last-child {
+    display: none !important;
+  }
+}
+
+/* Hero stats responsive */
+@media (max-width: 600px) {
+  #hero > div > div > div:last-child {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* About grid responsive */
+@media (max-width: 900px) {
+  #about > div > div:first-child {
+    grid-template-columns: 1fr !important;
+    gap: 60px !important;
+  }
+}
+
+/* Projects grid responsive */
+@media (max-width: 1024px) {
+  #projects > div > div[style*="grid-template-columns: repeat(3"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+@media (max-width: 600px) {
+  #projects > div > div[style*="grid-template-columns: repeat(3"],
+  #projects > div > div[style*="grid-template-columns: repeat(2"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Services grid responsive */
+@media (max-width: 900px) {
+  #services > div > div:last-child {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Team grid responsive */
+@media (max-width: 1024px) {
+  #team > div > div[style*="grid-template-columns: repeat(4"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+@media (max-width: 600px) {
+  #team > div > div[style*="grid-template-columns: repeat(4"],
+  #team > div > div[style*="grid-template-columns: repeat(2"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Contact grid responsive */
+@media (max-width: 900px) {
+  #contact > div > div:first-child {
+    grid-template-columns: 1fr !important;
+    gap: 48px !important;
+  }
+}
+@media (max-width: 600px) {
+  #contact form > div[style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Footer responsive */
+@media (max-width: 900px) {
+  footer > div > div:first-child {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+  }
+}
+
+/* Smooth image loading */
+img {
+  transition: opacity 0.3s ease;
+}
+
+/* Focus styles for accessibility */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #c9a96e;
+  outline-offset: 2px;
+}
