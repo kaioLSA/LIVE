@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { animateHeadingReveal, animateLabelReveal } from '../utils/textReveal';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -36,29 +37,47 @@ const Showcase: React.FC = () => {
 
   useEffect(() => {
     if (!sectionRef.current) return;
+    const section = sectionRef.current;
 
-    const items = sectionRef.current.querySelectorAll('.showcase-item');
+    // Section header typography
+    const label = section.querySelector('.showcase-label') as HTMLElement;
+    if (label) animateLabelReveal(label, section);
+
+    const heading = section.querySelector('.showcase-heading') as HTMLElement;
+    if (heading) animateHeadingReveal(heading, section);
+
+    // Showcase items: scrub-controlled slide-in
+    const items = section.querySelectorAll('.showcase-item');
     items.forEach((item) => {
       const img = item.querySelector('.showcase-img') as HTMLElement;
       const text = item.querySelector('.showcase-text') as HTMLElement;
+      const isLeft = img?.dataset.dir === 'left';
 
+      // Image: clip-path reveal + slide
       gsap.fromTo(
         img,
-        { x: img.dataset.dir === 'left' ? -80 : 80, opacity: 0 },
+        { x: isLeft ? -80 : 80, opacity: 0, clipPath: 'inset(5% 5% 5% 5%)' },
         {
-          x: 0, opacity: 1, duration: 1, ease: 'power3.out',
-          scrollTrigger: { trigger: item, start: 'top 70%' },
+          x: 0, opacity: 1, clipPath: 'inset(0% 0% 0% 0%)',
+          scrollTrigger: { trigger: item, start: 'top 80%', end: 'top 30%', scrub: 1 },
         }
       );
 
+      // Text: slide in from opposite side
       gsap.fromTo(
         text,
-        { x: img.dataset.dir === 'left' ? 80 : -80, opacity: 0 },
+        { x: isLeft ? 60 : -60, opacity: 0 },
         {
-          x: 0, opacity: 1, duration: 1, ease: 'power3.out', delay: 0.2,
-          scrollTrigger: { trigger: item, start: 'top 70%' },
+          x: 0, opacity: 1,
+          scrollTrigger: { trigger: item, start: 'top 75%', end: 'top 30%', scrub: 1 },
         }
       );
+
+      // Item title: word reveal
+      const itemTitle = item.querySelector('.showcase-item-title') as HTMLElement;
+      if (itemTitle) {
+        animateHeadingReveal(itemTitle, item as HTMLElement, { start: 'top 75%', end: 'top 40%' });
+      }
     });
   }, []);
 
@@ -66,8 +85,8 @@ const Showcase: React.FC = () => {
     <section ref={sectionRef} style={styles.section}>
       <div style={styles.container}>
         <div style={styles.header}>
-          <span style={styles.label}>NOSSAS ESPECIALIDADES</span>
-          <h2 style={styles.title}>Areas de <em style={styles.italic}>Atuacao</em></h2>
+          <span className="showcase-label" style={styles.label}>NOSSAS ESPECIALIDADES</span>
+          <h2 className="showcase-heading" style={styles.title}>Areas de <em style={styles.italic}>Atuacao</em></h2>
         </div>
 
         {showcaseItems.map((item, i) => {
@@ -96,7 +115,7 @@ const Showcase: React.FC = () => {
 
               <div className="showcase-text" style={styles.textCol}>
                 <span style={styles.itemLabel}>{item.category}</span>
-                <h3 style={styles.itemTitle}>{item.title}</h3>
+                <h3 className="showcase-item-title" style={styles.itemTitle}>{item.title}</h3>
                 <p style={styles.itemDesc}>{item.description}</p>
                 <div style={styles.features}>
                   {item.features.map((f, j) => (
@@ -124,6 +143,19 @@ const Showcase: React.FC = () => {
           );
         })}
       </div>
+
+      <style>{`
+        .showcase-item:hover .showcase-img img { transform: scale(1.03); }
+        @media (max-width: 900px) {
+          .showcase-item { flex-direction: column !important; gap: 32px !important; }
+          .showcase-item > div:first-child { flex: 1 1 100% !important; }
+          .showcase-item > div:last-child { flex: 1 1 100% !important; }
+          .showcase-item img { height: 350px !important; }
+        }
+        @media (max-width: 480px) {
+          .showcase-item img { height: 250px !important; }
+        }
+      `}</style>
     </section>
   );
 };
@@ -152,7 +184,7 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'block',
   },
   title: {
-    fontFamily: "'Playfair Display', serif",
+    fontFamily: "'Cormorant Garamond', serif",
     fontSize: 'clamp(2rem, 5vw, 3.5rem)',
     fontWeight: 500,
     color: '#fff',
@@ -210,7 +242,7 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'block',
   },
   itemTitle: {
-    fontFamily: "'Playfair Display', serif",
+    fontFamily: "'Cormorant Garamond', serif",
     fontSize: 'clamp(1.5rem, 3vw, 2.2rem)',
     fontWeight: 500,
     color: '#fff',
@@ -258,19 +290,5 @@ const styles: Record<string, React.CSSProperties> = {
   },
 };
 
-const showcaseStyles = document.createElement('style');
-showcaseStyles.textContent = `
-  .showcase-item:hover .showcase-img img { transform: scale(1.03); }
-  @media (max-width: 900px) {
-    .showcase-item { flex-direction: column !important; gap: 32px !important; }
-    .showcase-item > div:first-child { flex: 1 1 100% !important; }
-    .showcase-item > div:last-child { flex: 1 1 100% !important; }
-    .showcase-item img { height: 350px !important; }
-  }
-  @media (max-width: 480px) {
-    .showcase-item img { height: 250px !important; }
-  }
-`;
-document.head.appendChild(showcaseStyles);
 
 export default Showcase;

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { animateHeadingReveal, animateLabelReveal } from '../utils/textReveal';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -9,25 +10,21 @@ const steps = [
     number: '01',
     title: 'Descoberta',
     desc: 'Entendemos suas necessidades, desejos e limitacoes para definir o briefing ideal do projeto.',
-    icon: '🔍',
   },
   {
     number: '02',
     title: 'Conceito',
     desc: 'Desenvolvemos estudos preliminares e maquetes 3D para visualizacao do conceito arquitetonico.',
-    icon: '✏️',
   },
   {
     number: '03',
     title: 'Desenvolvimento',
     desc: 'Elaboramos o projeto executivo com todos os detalhamentos tecnicos e especificacoes.',
-    icon: '📐',
   },
   {
     number: '04',
     title: 'Execucao',
     desc: 'Acompanhamos cada etapa da obra garantindo fidelidade ao projeto e qualidade final.',
-    icon: '🏗️',
   },
 ];
 
@@ -36,36 +33,79 @@ const Process: React.FC = () => {
 
   useEffect(() => {
     if (!sectionRef.current) return;
+    const section = sectionRef.current;
 
-    const cards = sectionRef.current.querySelectorAll('.process-card');
+    const label = section.querySelector('.process-label') as HTMLElement;
+    if (label) animateLabelReveal(label, section);
+
+    const heading = section.querySelector('.process-heading') as HTMLElement;
+    if (heading) animateHeadingReveal(heading, section);
+
+    gsap.fromTo(
+      section.querySelector('.process-subtitle'),
+      { y: 30, opacity: 0 },
+      {
+        y: 0, opacity: 1,
+        scrollTrigger: { trigger: section, start: 'top 70%', end: 'top 45%', scrub: 1 },
+      }
+    );
+
+    const cards = section.querySelectorAll('.process-card');
     cards.forEach((card, i) => {
       gsap.fromTo(
         card,
-        { y: 80, opacity: 0, rotateX: 15 },
+        { y: 60, opacity: 0, rotateX: 15 },
         {
           y: 0, opacity: 1, rotateX: 0,
-          duration: 0.8,
-          delay: i * 0.15,
-          ease: 'power3.out',
           scrollTrigger: {
-            trigger: card,
-            start: 'top 85%',
+            trigger: section.querySelector('.process-timeline'),
+            start: `top ${80 - i * 5}%`,
+            end: `top ${45 - i * 5}%`,
+            scrub: 1,
           },
         }
       );
     });
 
-    // Animate the connecting line
     gsap.fromTo(
-      sectionRef.current.querySelector('.process-line'),
+      section.querySelector('.process-line'),
       { scaleX: 0 },
       {
         scaleX: 1,
-        duration: 1.5,
-        ease: 'power3.inOut',
         scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 60%',
+          trigger: section.querySelector('.process-timeline'),
+          start: 'top 70%',
+          end: 'top 35%',
+          scrub: 1,
+        },
+      }
+    );
+
+    // Vertical line for mobile
+    gsap.fromTo(
+      section.querySelector('.process-line-vertical'),
+      { scaleY: 0 },
+      {
+        scaleY: 1,
+        scrollTrigger: {
+          trigger: section.querySelector('.process-timeline'),
+          start: 'top 70%',
+          end: 'bottom 60%',
+          scrub: 1,
+        },
+      }
+    );
+
+    gsap.fromTo(
+      section.querySelectorAll('.process-dot'),
+      { scale: 0, opacity: 0 },
+      {
+        scale: 1, opacity: 1, stagger: 0.06,
+        scrollTrigger: {
+          trigger: section.querySelector('.process-timeline'),
+          start: 'top 65%',
+          end: 'top 35%',
+          scrub: 1,
         },
       }
     );
@@ -75,35 +115,33 @@ const Process: React.FC = () => {
     <section ref={sectionRef} style={styles.section}>
       <div style={styles.container}>
         <div style={styles.header}>
-          <span style={styles.label}>NOSSO PROCESSO</span>
-          <h2 style={styles.title}>Como <em style={styles.italic}>Trabalhamos</em></h2>
-          <p style={styles.subtitle}>
+          <span className="process-label" style={styles.label}>NOSSO PROCESSO</span>
+          <h2 className="process-heading" style={styles.title}>Como <em style={styles.italic}>Trabalhamos</em></h2>
+          <p className="process-subtitle" style={styles.subtitle}>
             Um processo estruturado para transformar sua visao em realidade com eficiencia e transparencia.
           </p>
         </div>
 
-        <div style={styles.timeline}>
+        {/* Desktop: horizontal timeline */}
+        <div className="process-timeline process-desktop" style={styles.timeline}>
           <div style={styles.grid}>
-            {/* Numbers row */}
             {steps.map((step, i) => (
               <div key={`num-${i}`} className="process-card" style={styles.numberCell}>
                 <span style={styles.number}>{step.number}</span>
               </div>
             ))}
 
-            {/* Dots + Line row — single row spanning all 4 columns */}
             <div style={styles.lineRow}>
               <div className="process-line" style={styles.line} />
               {steps.map((_, i) => (
                 <div key={`dot-${i}`} style={styles.dotCell}>
-                  <div style={styles.dotOuter}>
+                  <div className="process-dot" style={styles.dotOuter}>
                     <div style={styles.dotInner} />
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Titles row */}
             {steps.map((step, i) => (
               <div key={`title-${i}`} className="process-card" style={styles.titleCell}>
                 <h3 style={styles.cardTitle}>{step.title}</h3>
@@ -112,7 +150,34 @@ const Process: React.FC = () => {
             ))}
           </div>
         </div>
+
+        {/* Mobile/Tablet: vertical timeline */}
+        <div className="process-timeline process-mobile" style={{ position: 'relative' }}>
+          <div className="process-line-vertical" style={styles.verticalLine} />
+          {steps.map((step, i) => (
+            <div key={i} className="process-card" style={styles.mobileStep}>
+              <div style={styles.mobileDotCol}>
+                <div className="process-dot" style={styles.dotOuter}>
+                  <div style={styles.dotInner} />
+                </div>
+              </div>
+              <div style={styles.mobileContent}>
+                <span style={styles.mobileNumber}>{step.number}</span>
+                <h3 style={styles.mobileTitle}>{step.title}</h3>
+                <p style={styles.mobileDesc}>{step.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
+
+      <style>{`
+        .process-mobile { display: none; }
+        @media (max-width: 768px) {
+          .process-desktop { display: none !important; }
+          .process-mobile { display: block !important; }
+        }
+      `}</style>
     </section>
   );
 };
@@ -142,7 +207,7 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'block',
   },
   title: {
-    fontFamily: "'Playfair Display', serif",
+    fontFamily: "'Cormorant Garamond', serif",
     fontSize: 'clamp(2rem, 5vw, 3.5rem)',
     fontWeight: 500,
     color: '#fff',
@@ -170,7 +235,7 @@ const styles: Record<string, React.CSSProperties> = {
     paddingBottom: 12,
   },
   number: {
-    fontFamily: "'Playfair Display', serif",
+    fontFamily: "'Cormorant Garamond', serif",
     fontSize: '1.5rem',
     fontWeight: 600,
     color: '#c9a96e',
@@ -210,6 +275,7 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
     background: '#111',
+    flexShrink: 0,
   },
   dotInner: {
     width: 8,
@@ -222,7 +288,7 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '24px 12px 0',
   },
   cardTitle: {
-    fontFamily: "'Playfair Display', serif",
+    fontFamily: "'Cormorant Garamond', serif",
     fontSize: '1.3rem',
     fontWeight: 500,
     color: '#fff',
@@ -233,18 +299,54 @@ const styles: Record<string, React.CSSProperties> = {
     color: '#888',
     lineHeight: 1.7,
   },
+  // Mobile vertical timeline
+  verticalLine: {
+    position: 'absolute',
+    left: 9,
+    top: 10,
+    bottom: 10,
+    width: 1,
+    background: '#c9a96e',
+    transformOrigin: 'top',
+    zIndex: 0,
+  },
+  mobileStep: {
+    display: 'flex',
+    gap: 24,
+    marginBottom: 40,
+    position: 'relative',
+  },
+  mobileDotCol: {
+    display: 'flex',
+    flexDirection: 'column' as const,
+    alignItems: 'center',
+    paddingTop: 4,
+    zIndex: 1,
+  },
+  mobileContent: {
+    flex: 1,
+    paddingBottom: 8,
+  },
+  mobileNumber: {
+    fontFamily: "'Cormorant Garamond', serif",
+    fontSize: '0.9rem',
+    fontWeight: 600,
+    color: '#c9a96e',
+    display: 'block',
+    marginBottom: 4,
+  },
+  mobileTitle: {
+    fontFamily: "'Cormorant Garamond', serif",
+    fontSize: '1.4rem',
+    fontWeight: 500,
+    color: '#fff',
+    marginBottom: 8,
+  },
+  mobileDesc: {
+    fontSize: '0.85rem',
+    color: '#888',
+    lineHeight: 1.7,
+  },
 };
-
-const processStyles = document.createElement('style');
-processStyles.textContent = `
-  @media (max-width: 768px) {
-    section:has(.process-card) .process-line { display: none !important; }
-    section:has(.process-card) > div > div:last-child > div { grid-template-columns: 1fr 1fr !important; }
-  }
-  @media (max-width: 480px) {
-    section:has(.process-card) > div > div:last-child > div { grid-template-columns: 1fr !important; }
-  }
-`;
-document.head.appendChild(processStyles);
 
 export default Process;

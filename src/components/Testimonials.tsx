@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { animateHeadingReveal, animateLabelReveal } from '../utils/textReveal';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -22,7 +23,7 @@ const testimonials = [
   {
     name: 'Camila Santos',
     role: 'Diretora de Operacoes',
-    text: 'A integracao de tecnologia BIM e sustentabilidade nos nossos projetos comerciais resultou em uma economia de 30% nos custos operacionais. Trabalho excepcional.',
+    text: 'O bom gosto e a confianca que a equipe da LIV.E transmite sao incomparaveis. Cuidaram de cada etapa do processo, do conceito a execucao, com resultado impecavel.',
     image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&q=80',
     project: 'Espaco Conceito',
   },
@@ -34,19 +35,39 @@ const Testimonials: React.FC = () => {
 
   useEffect(() => {
     if (!sectionRef.current) return;
+    const section = sectionRef.current;
 
+    // Label typography
+    const label = section.querySelector('.test-label') as HTMLElement;
+    if (label) animateLabelReveal(label, section);
+
+    // Heading word reveal
+    const heading = section.querySelector('.test-heading') as HTMLElement;
+    if (heading) animateHeadingReveal(heading, section);
+
+    // Card: scrub slide in
     gsap.fromTo(
-      sectionRef.current.querySelectorAll('.test-animate'),
-      { y: 50, opacity: 0 },
+      section.querySelector('.test-card'),
+      { x: 60, opacity: 0 },
       {
-        y: 0, opacity: 1, stagger: 0.15, duration: 0.8, ease: 'power3.out',
-        scrollTrigger: { trigger: sectionRef.current, start: 'top 70%' },
+        x: 0, opacity: 1,
+        scrollTrigger: { trigger: section, start: 'top 70%', end: 'top 35%', scrub: 1 },
+      }
+    );
+
+    // Dots
+    gsap.fromTo(
+      section.querySelector('.test-dots'),
+      { opacity: 0, y: 20 },
+      {
+        opacity: 1, y: 0,
+        scrollTrigger: { trigger: section, start: 'top 65%', end: 'top 45%', scrub: 1 },
       }
     );
   }, []);
 
   useEffect(() => {
-    gsap.fromTo('.test-card', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' });
+    gsap.fromTo('.test-card-content', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' });
   }, [active]);
 
   useEffect(() => {
@@ -62,10 +83,10 @@ const Testimonials: React.FC = () => {
     <section ref={sectionRef} style={styles.section}>
       <div style={styles.container}>
         <div style={styles.grid}>
-          <div className="test-animate">
-            <span style={styles.label}>DEPOIMENTOS</span>
-            <h2 style={styles.title}>O que nossos <em style={styles.italic}>clientes</em> dizem</h2>
-            <div style={styles.dots}>
+          <div>
+            <span className="test-label" style={styles.label}>DEPOIMENTOS</span>
+            <h2 className="test-heading" style={styles.title}>O que nossos <em style={styles.italic}>clientes</em> dizem</h2>
+            <div className="test-dots" style={styles.dots}>
               {testimonials.map((_, i) => (
                 <button
                   key={i}
@@ -80,20 +101,28 @@ const Testimonials: React.FC = () => {
             </div>
           </div>
 
-          <div className="test-card test-animate" style={styles.card}>
-            <div style={styles.quoteIcon}>"</div>
-            <p style={styles.text}>{t.text}</p>
-            <div style={styles.author}>
-              <img src={t.image} alt={t.name} style={styles.avatar} />
-              <div>
-                <h4 style={styles.authorName}>{t.name}</h4>
-                <span style={styles.authorRole}>{t.role}</span>
-                <span style={styles.project}>Projeto: {t.project}</span>
+          <div className="test-card" style={styles.card}>
+            <div className="test-card-content">
+              <div style={styles.quoteIcon}>"</div>
+              <p style={styles.text}>{t.text}</p>
+              <div style={styles.author}>
+                <img src={t.image} alt={t.name} style={styles.avatar} />
+                <div>
+                  <h4 style={styles.authorName}>{t.name}</h4>
+                  <span style={styles.authorRole}>{t.role}</span>
+                  <span style={styles.project}>Projeto: {t.project}</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 768px) {
+          section:has(.test-card) > div > div { grid-template-columns: 1fr !important; gap: 40px !important; }
+        }
+      `}</style>
     </section>
   );
 };
@@ -124,7 +153,7 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'block',
   },
   title: {
-    fontFamily: "'Playfair Display', serif",
+    fontFamily: "'Cormorant Garamond', serif",
     fontSize: 'clamp(2rem, 4vw, 3rem)',
     fontWeight: 500,
     color: '#fff',
@@ -150,7 +179,7 @@ const styles: Record<string, React.CSSProperties> = {
     borderLeft: '3px solid #c9a96e',
   },
   quoteIcon: {
-    fontFamily: "'Playfair Display', serif",
+    fontFamily: "'Cormorant Garamond', serif",
     fontSize: '5rem',
     color: 'rgba(201,169,110,0.2)',
     lineHeight: 1,
@@ -176,7 +205,7 @@ const styles: Record<string, React.CSSProperties> = {
     border: '2px solid #c9a96e',
   },
   authorName: {
-    fontFamily: "'Playfair Display', serif",
+    fontFamily: "'Cormorant Garamond', serif",
     fontSize: '1.1rem',
     color: '#fff',
     marginBottom: 2,
@@ -196,12 +225,5 @@ const styles: Record<string, React.CSSProperties> = {
   },
 };
 
-const testStyles = document.createElement('style');
-testStyles.textContent = `
-  @media (max-width: 768px) {
-    section:has(.test-card) > div > div { grid-template-columns: 1fr !important; gap: 40px !important; }
-  }
-`;
-document.head.appendChild(testStyles);
 
 export default Testimonials;

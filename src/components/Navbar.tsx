@@ -5,9 +5,17 @@ import { LogoLight } from './Logo';
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const navRef = useRef<HTMLElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -69,7 +77,7 @@ const Navbar: React.FC = () => {
             <LogoLight height={44} />
           </div>
 
-          <div style={styles.desktopLinks}>
+          <div style={{ ...styles.desktopLinks, display: isMobile ? 'none' : 'flex' }}>
             {navLinks.map((link) => (
               <a
                 key={link.name}
@@ -88,24 +96,27 @@ const Navbar: React.FC = () => {
             ))}
           </div>
 
-          <a
-            href="#contact"
-            onClick={(e) => { e.preventDefault(); handleNavClick('#contact'); }}
-            style={styles.ctaBtn}
-            onMouseEnter={(e) => {
-              (e.target as HTMLElement).style.background = '#c9a96e';
-              (e.target as HTMLElement).style.color = '#0a0a0a';
-            }}
-            onMouseLeave={(e) => {
-              (e.target as HTMLElement).style.background = 'transparent';
-              (e.target as HTMLElement).style.color = '#c9a96e';
-            }}
-          >
-            Fale Conosco
-          </a>
+          {!isMobile && (
+            <a
+              href="#contact"
+              onClick={(e) => { e.preventDefault(); handleNavClick('#contact'); }}
+              style={styles.ctaBtn}
+              onMouseEnter={(e) => {
+                (e.target as HTMLElement).style.background = '#c9a96e';
+                (e.target as HTMLElement).style.color = '#0a0a0a';
+              }}
+              onMouseLeave={(e) => {
+                (e.target as HTMLElement).style.background = 'transparent';
+                (e.target as HTMLElement).style.color = '#c9a96e';
+              }}
+            >
+              Fale Conosco
+            </a>
+          )}
 
+          {isMobile && (
           <button
-            style={styles.burger}
+            style={{ ...styles.burger, display: 'flex' }}
             onClick={() => setIsOpen(!isOpen)}
             aria-label="Toggle menu"
           >
@@ -122,6 +133,7 @@ const Navbar: React.FC = () => {
               transform: isOpen ? 'rotate(-45deg) translate(5px, -5px)' : 'none',
             }} />
           </button>
+          )}
         </div>
       </nav>
 
@@ -178,7 +190,7 @@ const styles: Record<string, React.CSSProperties> = {
     justifyContent: 'center',
     background: 'linear-gradient(135deg, #c9a96e, #e0c48a)',
     color: '#0a0a0a',
-    fontFamily: "'Playfair Display', serif",
+    fontFamily: "'Cormorant Garamond', serif",
     fontSize: '1.5rem',
     fontWeight: 700,
     borderRadius: 4,
@@ -260,7 +272,7 @@ const styles: Record<string, React.CSSProperties> = {
     gap: 32,
   },
   mobileLink: {
-    fontFamily: "'Playfair Display', serif",
+    fontFamily: "'Cormorant Garamond', serif",
     fontSize: '2rem',
     fontWeight: 500,
     color: '#f5f5f5',
@@ -269,21 +281,5 @@ const styles: Record<string, React.CSSProperties> = {
     transition: 'color 0.3s',
   },
 };
-
-// Add responsive CSS via style tag
-const styleSheet = document.createElement('style');
-styleSheet.textContent = `
-  @media (max-width: 1024px) {
-    nav .desktop-links { display: none !important; }
-  }
-  @media (max-width: 768px) {
-    nav button[aria-label="Toggle menu"] { display: flex !important; }
-    nav a[href="#contact"]:last-of-type { display: none !important; }
-  }
-  @media (min-width: 769px) {
-    nav button[aria-label="Toggle menu"] { display: none !important; }
-  }
-`;
-document.head.appendChild(styleSheet);
 
 export default Navbar;

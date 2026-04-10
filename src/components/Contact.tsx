@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { animateHeadingReveal, animateLabelReveal } from '../utils/textReveal';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -10,13 +11,43 @@ const Contact: React.FC = () => {
 
   useEffect(() => {
     if (!sectionRef.current) return;
+    const section = sectionRef.current;
 
+    // Label typography
+    const label = section.querySelector('.contact-label') as HTMLElement;
+    if (label) animateLabelReveal(label, section);
+
+    // Heading word reveal
+    const heading = section.querySelector('.contact-heading') as HTMLElement;
+    if (heading) animateHeadingReveal(heading, section);
+
+    // Subtitle
     gsap.fromTo(
-      sectionRef.current.querySelectorAll('.contact-animate'),
-      { y: 50, opacity: 0 },
+      section.querySelector('.contact-subtitle'),
+      { y: 30, opacity: 0 },
       {
-        y: 0, opacity: 1, stagger: 0.12, duration: 0.8, ease: 'power3.out',
-        scrollTrigger: { trigger: sectionRef.current, start: 'top 70%' },
+        y: 0, opacity: 1,
+        scrollTrigger: { trigger: section, start: 'top 70%', end: 'top 45%', scrub: 1 },
+      }
+    );
+
+    // Info items: scrub stagger
+    gsap.fromTo(
+      section.querySelectorAll('.contact-info-item'),
+      { x: -30, opacity: 0 },
+      {
+        x: 0, opacity: 1, stagger: 0.06,
+        scrollTrigger: { trigger: section, start: 'top 60%', end: 'top 25%', scrub: 1 },
+      }
+    );
+
+    // Form: scrub slide in from right
+    gsap.fromTo(
+      section.querySelector('.contact-form'),
+      { x: 60, opacity: 0 },
+      {
+        x: 0, opacity: 1,
+        scrollTrigger: { trigger: section, start: 'top 65%', end: 'top 25%', scrub: 1 },
       }
     );
   }, []);
@@ -32,11 +63,11 @@ const Contact: React.FC = () => {
       <div style={styles.container}>
         <div style={styles.grid}>
           <div>
-            <span className="contact-animate" style={styles.label}>CONTATO</span>
-            <h2 className="contact-animate" style={styles.title}>
+            <span className="contact-label" style={styles.label}>CONTATO</span>
+            <h2 className="contact-heading" style={styles.title}>
               Vamos criar algo <em style={styles.italic}>extraordinario</em> juntos
             </h2>
-            <p className="contact-animate" style={styles.subtitle}>
+            <p className="contact-subtitle" style={styles.subtitle}>
               Entre em contato para discutir seu proximo projeto.
               Estamos prontos para transformar suas ideias em realidade.
             </p>
@@ -48,7 +79,7 @@ const Contact: React.FC = () => {
                 { label: 'Email', value: 'contato@livearquitetura.com.br' },
                 { label: 'Horario', value: 'Seg - Sex: 9h as 18h' },
               ].map((item, i) => (
-                <div key={i} className="contact-animate" style={styles.infoItem}>
+                <div key={i} className="contact-info-item" style={styles.infoItem}>
                   <span style={styles.infoLabel}>{item.label}</span>
                   <span style={styles.infoValue}>{item.value}</span>
                 </div>
@@ -56,7 +87,7 @@ const Contact: React.FC = () => {
             </div>
           </div>
 
-          <div className="contact-animate" style={styles.formWrapper}>
+          <div className="contact-form" style={styles.formWrapper}>
             <form style={styles.form} onSubmit={(e) => e.preventDefault()}>
               <h3 style={styles.formTitle}>Solicitar Orcamento</h3>
 
@@ -144,6 +175,13 @@ const Contact: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 768px) {
+          #contact > div > div { grid-template-columns: 1fr !important; gap: 48px !important; }
+          #contact form > div:has(> div + div) { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </section>
   );
 };
@@ -174,7 +212,7 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'block',
   },
   title: {
-    fontFamily: "'Playfair Display', serif",
+    fontFamily: "'Cormorant Garamond', serif",
     fontSize: 'clamp(2rem, 4vw, 3rem)',
     fontWeight: 500,
     color: '#fff',
@@ -221,7 +259,7 @@ const styles: Record<string, React.CSSProperties> = {
     gap: 20,
   },
   formTitle: {
-    fontFamily: "'Playfair Display', serif",
+    fontFamily: "'Cormorant Garamond', serif",
     fontSize: '1.5rem',
     fontWeight: 500,
     color: '#fff',
@@ -272,13 +310,5 @@ const styles: Record<string, React.CSSProperties> = {
   },
 };
 
-const contactStyles = document.createElement('style');
-contactStyles.textContent = `
-  @media (max-width: 768px) {
-    #contact > div > div { grid-template-columns: 1fr !important; gap: 48px !important; }
-    #contact form > div:has(> div + div) { grid-template-columns: 1fr !important; }
-  }
-`;
-document.head.appendChild(contactStyles);
 
 export default Contact;

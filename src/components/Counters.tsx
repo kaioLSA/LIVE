@@ -19,12 +19,47 @@ const Counters: React.FC = () => {
   useEffect(() => {
     if (!sectionRef.current) return;
 
+    // Counter numbers trigger once (they need to complete)
     ScrollTrigger.create({
       trigger: sectionRef.current,
       start: 'top 75%',
       once: true,
       onEnter: () => setTriggered(true),
     });
+
+    // Card entrance: scrub-controlled
+    gsap.fromTo(
+      '.counter-item',
+      { y: 50, opacity: 0, scale: 0.9 },
+      {
+        y: 0,
+        opacity: 1,
+        scale: 1,
+        stagger: 0.08,
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 90%',
+          end: 'top 50%',
+          scrub: 1,
+        },
+      }
+    );
+
+    // Divider lines grow
+    gsap.fromTo(
+      '.counter-divider',
+      { scaleX: 0 },
+      {
+        scaleX: 1,
+        stagger: 0.08,
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 80%',
+          end: 'top 45%',
+          scrub: 1,
+        },
+      }
+    );
   }, []);
 
   useEffect(() => {
@@ -45,13 +80,6 @@ const Counters: React.FC = () => {
         },
       });
     });
-
-    // Animate the cards in
-    gsap.fromTo(
-      '.counter-item',
-      { y: 40, opacity: 0 },
-      { y: 0, opacity: 1, stagger: 0.15, duration: 0.8, ease: 'power3.out' }
-    );
   }, [triggered]);
 
   return (
@@ -64,19 +92,28 @@ const Counters: React.FC = () => {
                 <span style={styles.number}>{values[i]}</span>
                 <span style={styles.suffix}>{counter.suffix}</span>
               </div>
-              <div style={styles.divider} />
+              <div className="counter-divider" style={styles.divider} />
               <span style={styles.label}>{counter.label}</span>
             </div>
           ))}
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 768px) {
+          section:has(.counter-item) > div > div { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+        @media (max-width: 480px) {
+          section:has(.counter-item) > div > div { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </section>
   );
 };
 
 const styles: Record<string, React.CSSProperties> = {
   section: {
-    padding: '100px 0',
+    padding: '48px 0',
     background: '#ffffff',
   },
   container: {
@@ -101,14 +138,14 @@ const styles: Record<string, React.CSSProperties> = {
     marginBottom: 16,
   },
   number: {
-    fontFamily: "'Playfair Display', serif",
+    fontFamily: "'Cormorant Garamond', serif",
     fontSize: 'clamp(3rem, 6vw, 5rem)',
     fontWeight: 700,
     color: '#1a1a1a',
     lineHeight: 1,
   },
   suffix: {
-    fontFamily: "'Playfair Display', serif",
+    fontFamily: "'Cormorant Garamond', serif",
     fontSize: 'clamp(1.5rem, 3vw, 2.5rem)',
     fontWeight: 500,
     color: '#c9a96e',
@@ -118,6 +155,7 @@ const styles: Record<string, React.CSSProperties> = {
     height: 2,
     background: '#c9a96e',
     margin: '0 auto 16px',
+    transformOrigin: 'center',
   },
   label: {
     fontFamily: "'Inter', sans-serif",
@@ -131,15 +169,5 @@ const styles: Record<string, React.CSSProperties> = {
   },
 };
 
-const counterStyles = document.createElement('style');
-counterStyles.textContent = `
-  @media (max-width: 768px) {
-    section:has(.counter-item) > div > div { grid-template-columns: repeat(2, 1fr) !important; }
-  }
-  @media (max-width: 480px) {
-    section:has(.counter-item) > div > div { grid-template-columns: 1fr !important; }
-  }
-`;
-document.head.appendChild(counterStyles);
 
 export default Counters;

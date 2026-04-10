@@ -23,7 +23,7 @@ const Logo: React.FC<LogoProps> = ({ height = 50, className, style }) => {
       <text
         x="0"
         y="68"
-        fontFamily="'Playfair Display', Georgia, serif"
+        fontFamily="'Cormorant Garamond', Georgia, serif"
         fontSize="72"
         fontWeight="700"
         fill="#3d1518"
@@ -36,7 +36,7 @@ const Logo: React.FC<LogoProps> = ({ height = 50, className, style }) => {
       <text
         x="42"
         y="68"
-        fontFamily="'Playfair Display', Georgia, serif"
+        fontFamily="'Cormorant Garamond', Georgia, serif"
         fontSize="72"
         fontWeight="700"
         fill="#3d1518"
@@ -49,7 +49,7 @@ const Logo: React.FC<LogoProps> = ({ height = 50, className, style }) => {
       <text
         x="62"
         y="68"
-        fontFamily="'Playfair Display', Georgia, serif"
+        fontFamily="'Cormorant Garamond', Georgia, serif"
         fontSize="72"
         fontWeight="700"
         fill="#3d1518"
@@ -104,7 +104,7 @@ export const LogoLight: React.FC<LogoProps> = ({ height = 50, className, style }
       <text
         x="0"
         y="68"
-        fontFamily="'Playfair Display', Georgia, serif"
+        fontFamily="'Cormorant Garamond', Georgia, serif"
         fontSize="72"
         fontWeight="700"
         fill="#ffffff"
@@ -117,7 +117,7 @@ export const LogoLight: React.FC<LogoProps> = ({ height = 50, className, style }
       <text
         x="42"
         y="68"
-        fontFamily="'Playfair Display', Georgia, serif"
+        fontFamily="'Cormorant Garamond', Georgia, serif"
         fontSize="72"
         fontWeight="700"
         fill="#ffffff"
@@ -130,7 +130,7 @@ export const LogoLight: React.FC<LogoProps> = ({ height = 50, className, style }
       <text
         x="62"
         y="68"
-        fontFamily="'Playfair Display', Georgia, serif"
+        fontFamily="'Cormorant Garamond', Georgia, serif"
         fontSize="72"
         fontWeight="700"
         fill="#ffffff"

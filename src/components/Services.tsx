@@ -7,56 +7,77 @@ gsap.registerPlugin(ScrollTrigger);
 const services = [
   {
     number: '01',
-    title: 'Projeto Arquitetonico',
-    description: 'Desenvolvimento completo de projetos residenciais, comerciais e corporativos, desde o estudo preliminar ate o projeto executivo.',
-    features: ['Estudo de viabilidade', 'Projeto conceitual', 'Projeto executivo', 'Acompanhamento de obra'],
+    title: 'Arquitetura',
+    description: 'Projetos arquitetonicos residenciais, comerciais e corporativos. Do estudo de viabilidade ao projeto executivo, cada etapa e conduzida com escuta real e atencao a cada detalhe.',
     image: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800&q=80',
   },
   {
     number: '02',
     title: 'Design de Interiores',
-    description: 'Criacao de ambientes funcionais e esteticamente sofisticados que refletem a personalidade e o estilo de vida de cada cliente.',
-    features: ['Layout e mobiliario', 'Especificacao de materiais', 'Iluminacao', 'Decoracao'],
+    description: 'Criamos ambientes que refletem a essencia de quem os habita. Combinacao de materiais nobres, beleza e elegancia para espacos que contam historias.',
     image: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=800&q=80',
   },
   {
     number: '03',
-    title: 'Urbanismo & Paisagismo',
-    description: 'Planejamento urbano e projetos paisagisticos que promovem sustentabilidade, funcionalidade e qualidade de vida.',
-    features: ['Master plan', 'Areas verdes', 'Espacos publicos', 'Mobiliario urbano'],
+    title: 'Retrofit',
+    description: 'Revitalizacao inteligente de edificacoes existentes, agregando valor, modernidade e eficiencia sem perder a identidade original do espaco.',
     image: 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=800&q=80',
   },
   {
     number: '04',
-    title: 'Consultoria & BIM',
-    description: 'Consultoria especializada e modelagem BIM para projetos de alta complexidade com total controle de informacoes.',
-    features: ['Modelagem 3D/BIM', 'Compatibilizacao', 'Consultoria tecnica', 'Gestao de projetos'],
+    title: 'Gerenciamento de Obra',
+    description: 'Acompanhamento integral de cada etapa da obra, garantindo fidelidade ao projeto, cumprimento de prazos e controle rigoroso de qualidade.',
     image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
+  },
+  {
+    number: '05',
+    title: 'Decorados & Turn Key',
+    description: 'Entrega completa do projeto pronto para uso. Uma unica empresa assume toda a responsabilidade, do conceito a execucao final, com resultado impecavel.',
+    image: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800&q=80',
   },
 ];
 
 const Services: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
+  const pinRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
-    if (!sectionRef.current) return;
+    if (!sectionRef.current || !pinRef.current) return;
 
-    gsap.fromTo(
-      sectionRef.current.querySelectorAll('.svc-animate'),
-      { y: 50, opacity: 0 },
-      {
-        y: 0, opacity: 1, stagger: 0.12, duration: 0.8, ease: 'power3.out',
-        scrollTrigger: { trigger: sectionRef.current, start: 'top 70%' },
-      }
-    );
+    const totalScrollHeight = services.length * 100;
+
+    const st = ScrollTrigger.create({
+      trigger: sectionRef.current,
+      start: 'top top',
+      end: `+=${totalScrollHeight}%`,
+      pin: pinRef.current,
+      scrub: 0.5,
+      onUpdate: (self) => {
+        const progress = self.progress;
+        const index = Math.min(
+          Math.floor(progress * services.length),
+          services.length - 1
+        );
+        setActiveIndex(index);
+      },
+    });
+
+    return () => st.kill();
   }, []);
 
   useEffect(() => {
+    gsap.to('.svc-image', {
+      opacity: 0,
+      duration: 0.3,
+      onComplete: () => {
+        gsap.to('.svc-image', { opacity: 1, duration: 0.5 });
+      },
+    });
     gsap.fromTo(
-      '.svc-detail',
-      { x: 30, opacity: 0 },
-      { x: 0, opacity: 1, duration: 0.5, ease: 'power3.out' }
+      '.svc-text-content',
+      { y: 20, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.5, delay: 0.2 }
     );
   }, [activeIndex]);
 
@@ -64,225 +85,215 @@ const Services: React.FC = () => {
 
   return (
     <section ref={sectionRef} id="services" style={styles.section}>
-      <div style={styles.container}>
-        <div className="svc-animate" style={styles.header}>
-          <span style={styles.label}>O QUE FAZEMOS</span>
-          <h2 style={styles.title}>Nossos <em style={styles.italic}>Servicos</em></h2>
-          <p style={styles.subtitle}>
-            Oferecemos solucoes completas em arquitetura, design e urbanismo, do conceito a execucao.
-          </p>
-        </div>
-
-        <div style={styles.grid}>
-          <div style={styles.listCol}>
-            {services.map((svc, i) => (
-              <div
-                key={i}
-                className="svc-animate"
-                style={{
-                  ...styles.item,
-                  borderColor: activeIndex === i ? '#c9a96e' : '#2a2a2a',
-                  background: activeIndex === i ? 'rgba(201,169,110,0.05)' : 'transparent',
-                }}
-                onClick={() => setActiveIndex(i)}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.borderColor = '#c9a96e';
-                }}
-                onMouseLeave={(e) => {
-                  if (activeIndex !== i) {
-                    (e.currentTarget as HTMLElement).style.borderColor = '#2a2a2a';
-                  }
-                }}
-              >
-                <span style={styles.itemNumber}>{svc.number}</span>
-                <div style={{ flex: 1 }}>
-                  <h3 style={{
-                    ...styles.itemTitle,
-                    color: activeIndex === i ? '#c9a96e' : '#fff',
-                  }}>{svc.title}</h3>
-                  <p style={styles.itemDesc}>{svc.description}</p>
-                </div>
-                <span style={{
-                  ...styles.arrow,
-                  transform: activeIndex === i ? 'rotate(0deg)' : 'rotate(-90deg)',
-                  color: activeIndex === i ? '#c9a96e' : '#555',
-                }}>↓</span>
-              </div>
-            ))}
+      <div ref={pinRef} style={styles.pinWrapper}>
+        <div style={styles.container}>
+          {/* Header */}
+          <div style={styles.topBar}>
+            <div>
+              <span style={styles.label}>O QUE FAZEMOS</span>
+              <h2 style={styles.title}>Nossos <em style={styles.italic}>Servicos</em></h2>
+            </div>
+            <div style={styles.counter}>
+              <span style={styles.counterCurrent}>{active.number}</span>
+              <span style={styles.counterSep}>/</span>
+              <span style={styles.counterTotal}>{String(services.length).padStart(2, '0')}</span>
+            </div>
           </div>
 
-          <div className="svc-detail svc-animate" style={styles.detailCol}>
-            <div style={styles.detailImage}>
+          {/* Mobile/Tablet: horizontal tabs */}
+          <div className="svc-tabs-mobile">
+            <div style={styles.tabsScroll}>
+              {services.map((svc, i) => (
+                <button
+                  key={i}
+                  style={{
+                    ...styles.tab,
+                    color: activeIndex === i ? '#fff' : '#555',
+                    borderBottomColor: activeIndex === i ? '#c9a96e' : 'transparent',
+                  }}
+                >
+                  <span style={styles.tabNumber}>{svc.number}</span>
+                  {svc.title}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Desktop content grid */}
+          <div className="svc-content-grid svc-desktop-grid" style={styles.grid}>
+            {/* Left - navigation */}
+            <div style={styles.navCol}>
+              {services.map((svc, i) => (
+                <div
+                  key={i}
+                  style={{
+                    ...styles.navItem,
+                    opacity: activeIndex === i ? 1 : 0.35,
+                    borderLeftColor: activeIndex === i ? '#c9a96e' : 'transparent',
+                    paddingLeft: activeIndex === i ? 24 : 20,
+                  }}
+                >
+                  <span style={styles.navNumber}>{svc.number}</span>
+                  <span style={{
+                    ...styles.navTitle,
+                    color: activeIndex === i ? '#fff' : '#666',
+                  }}>{svc.title}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Center - image */}
+            <div className="svc-image" style={styles.imageCol}>
               <img src={active.image} alt={active.title} style={styles.img} />
-              <div style={styles.detailOverlay}>
-                <span style={styles.detailNumber}>{active.number}</span>
+              <div style={styles.imageGradient} />
+            </div>
+
+            {/* Right - description */}
+            <div className="svc-text-content" style={styles.textCol}>
+              <h3 style={styles.serviceTitle}>{active.title}</h3>
+              <p style={styles.serviceDesc}>{active.description}</p>
+              <div style={styles.progressBar}>
+                <div
+                  style={{
+                    ...styles.progressFill,
+                    width: `${((activeIndex + 1) / services.length) * 100}%`,
+                  }}
+                />
               </div>
             </div>
-            <div style={styles.detailContent}>
-              <h3 style={styles.detailTitle}>{active.title}</h3>
-              <ul style={styles.features}>
-                {active.features.map((f, i) => (
-                  <li key={i} style={styles.feature}>
-                    <span style={styles.featureDot} />
-                    {f}
-                  </li>
-                ))}
-              </ul>
+          </div>
+
+          {/* Mobile/Tablet content: stacked image + text */}
+          <div className="svc-mobile-content">
+            <div className="svc-image" style={styles.mobileImageCol}>
+              <img src={active.image} alt={active.title} style={styles.img} />
+              <div style={styles.imageGradient} />
+            </div>
+            <div className="svc-text-content" style={styles.mobileTextCol}>
+              <h3 style={styles.mobileServiceTitle}>{active.title}</h3>
+              <p style={styles.mobileServiceDesc}>{active.description}</p>
+              <div style={styles.progressBar}>
+                <div
+                  style={{
+                    ...styles.progressFill,
+                    width: `${((activeIndex + 1) / services.length) * 100}%`,
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+      <style>{`
+        .svc-tabs-mobile { display: none; }
+        .svc-mobile-content { display: none; }
+
+        @media (max-width: 900px) {
+          .svc-desktop-grid { display: none !important; }
+          .svc-tabs-mobile { display: block !important; }
+          .svc-mobile-content { display: block !important; }
+        }
+      `}</style>
     </section>
   );
 };
 
 const styles: Record<string, React.CSSProperties> = {
   section: {
-    padding: '120px 0',
     background: '#0a0a0a',
+    position: 'relative',
   },
-  container: {
-    maxWidth: 1400,
-    margin: '0 auto',
-    padding: '0 24px',
+  pinWrapper: {
+    minHeight: '100vh',
+    display: 'flex',
+    alignItems: 'center',
+    padding: '80px 0',
   },
-  header: {
-    marginBottom: 60,
+  container: { maxWidth: 1400, margin: '0 auto', padding: '0 24px', width: '100%' },
+  topBar: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 32 },
+  label: { fontFamily: "'Inter', sans-serif", fontSize: '0.75rem', fontWeight: 600, letterSpacing: 4, color: '#c9a96e', marginBottom: 8, display: 'block' },
+  title: { fontFamily: "'Cormorant Garamond', serif", fontSize: 'clamp(1.8rem, 4vw, 3rem)', fontWeight: 500, color: '#fff' },
+  italic: { fontStyle: 'italic', color: '#c9a96e' },
+  counter: { display: 'flex', alignItems: 'baseline', gap: 4 },
+  counterCurrent: { fontFamily: "'Cormorant Garamond', serif", fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 600, color: '#c9a96e' },
+  counterSep: { fontSize: '1.2rem', color: '#333', margin: '0 4px' },
+  counterTotal: { fontFamily: "'Cormorant Garamond', serif", fontSize: '1.2rem', color: '#555' },
+
+  // Desktop grid
+  grid: { display: 'grid', gridTemplateColumns: '200px 1fr 1fr', gap: 40, alignItems: 'start' },
+  navCol: { display: 'flex', flexDirection: 'column' as const, gap: 8 },
+  navItem: {
+    display: 'flex', alignItems: 'center', gap: 12, padding: '12px 20px',
+    borderLeft: '2px solid transparent', transition: 'all 0.4s ease', cursor: 'default',
   },
-  label: {
+  navNumber: { fontFamily: "'Cormorant Garamond', serif", fontSize: '0.9rem', fontWeight: 600, color: '#c9a96e' },
+  navTitle: { fontSize: '0.85rem', fontWeight: 500, letterSpacing: 0.5, transition: 'color 0.3s' },
+  imageCol: { position: 'relative', overflow: 'hidden', height: 400 },
+  img: { width: '100%', height: '100%', objectFit: 'cover' as const },
+  imageGradient: { position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%', background: 'linear-gradient(to top, rgba(10,10,10,0.8), transparent)' },
+  textCol: { paddingTop: 20 },
+  serviceTitle: { fontFamily: "'Cormorant Garamond', serif", fontSize: '2rem', fontWeight: 500, color: '#fff', marginBottom: 20 },
+  serviceDesc: { fontSize: '1rem', color: '#999', lineHeight: 1.8, marginBottom: 32 },
+  progressBar: { width: '100%', height: 2, background: '#2a2a2a', borderRadius: 1 },
+  progressFill: { height: '100%', background: '#c9a96e', borderRadius: 1, transition: 'width 0.5s ease' },
+
+  // Mobile tabs
+  tabsScroll: {
+    display: 'flex',
+    gap: 0,
+    overflowX: 'auto' as const,
+    marginBottom: 24,
+    borderBottom: '1px solid #2a2a2a',
+    WebkitOverflowScrolling: 'touch' as any,
+    scrollbarWidth: 'none' as any,
+  },
+  tab: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+    padding: '12px 16px',
+    background: 'none',
+    border: 'none',
+    borderBottom: '2px solid transparent',
     fontFamily: "'Inter', sans-serif",
     fontSize: '0.75rem',
-    fontWeight: 600,
-    letterSpacing: 4,
-    color: '#c9a96e',
-    marginBottom: 12,
-    display: 'block',
-  },
-  title: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: 'clamp(2rem, 5vw, 3.5rem)',
     fontWeight: 500,
-    color: '#fff',
-    marginBottom: 16,
-  },
-  italic: { fontStyle: 'italic', color: '#c9a96e' },
-  subtitle: {
-    fontSize: '1rem',
-    color: '#888',
-    maxWidth: 500,
-    lineHeight: 1.7,
-  },
-  grid: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: 48,
-    alignItems: 'start',
-  },
-  listCol: {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    gap: 0,
-  },
-  item: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 20,
-    padding: '24px 20px',
-    borderLeft: '3px solid #2a2a2a',
-    cursor: 'pointer',
+    letterSpacing: 0.5,
+    whiteSpace: 'nowrap' as const,
+    cursor: 'default',
     transition: 'all 0.3s ease',
   },
-  itemNumber: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: '1.5rem',
+  tabNumber: {
+    fontFamily: "'Cormorant Garamond', serif",
+    fontSize: '0.8rem',
     fontWeight: 600,
     color: '#c9a96e',
-    opacity: 0.5,
   },
-  itemTitle: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: '1.2rem',
-    fontWeight: 500,
-    marginBottom: 6,
-    transition: 'color 0.3s',
-  },
-  itemDesc: {
-    fontSize: '0.85rem',
-    color: '#777',
-    lineHeight: 1.6,
-  },
-  arrow: {
-    fontSize: '1.2rem',
-    transition: 'all 0.3s ease',
-  },
-  detailCol: {
-    position: 'sticky' as const,
-    top: 100,
-  },
-  detailImage: {
+
+  // Mobile content
+  mobileImageCol: {
     position: 'relative',
     overflow: 'hidden',
-    height: 350,
+    height: 280,
     marginBottom: 24,
   },
-  img: {
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover' as const,
+  mobileTextCol: {
+    paddingBottom: 16,
   },
-  detailOverlay: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    padding: '20px 24px',
-    background: 'linear-gradient(to top, rgba(10,10,10,0.9), transparent)',
-    width: '100%',
-  },
-  detailNumber: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: '3rem',
-    fontWeight: 700,
-    color: 'rgba(201,169,110,0.3)',
-  },
-  detailContent: {
-    padding: '0 8px',
-  },
-  detailTitle: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: '1.5rem',
+  mobileServiceTitle: {
+    fontFamily: "'Cormorant Garamond', serif",
+    fontSize: '1.6rem',
     fontWeight: 500,
     color: '#fff',
-    marginBottom: 20,
+    marginBottom: 12,
   },
-  features: {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    gap: 12,
-  },
-  feature: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 12,
+  mobileServiceDesc: {
     fontSize: '0.9rem',
-    color: '#bbb',
-  },
-  featureDot: {
-    width: 6,
-    height: 6,
-    borderRadius: '50%',
-    background: '#c9a96e',
-    flexShrink: 0,
+    color: '#999',
+    lineHeight: 1.8,
+    marginBottom: 24,
   },
 };
-
-const svcStyles = document.createElement('style');
-svcStyles.textContent = `
-  @media (max-width: 768px) {
-    #services > div > div:last-child {
-      grid-template-columns: 1fr !important;
-    }
-  }
-`;
-document.head.appendChild(svcStyles);
 
 export default Services;

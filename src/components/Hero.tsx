@@ -245,6 +245,20 @@ const Hero: React.FC = () => {
         <div style={styles.scrollLine} />
         <span style={styles.scrollText}>SCROLL</span>
       </div>
+
+      <style>{`
+        @keyframes scrollPulse {
+          0%, 100% { opacity: 0.3; transform: scaleY(0.6); }
+          50% { opacity: 1; transform: scaleY(1); }
+        }
+        @media (max-width: 768px) {
+          #hero .hero-scroll { display: none !important; }
+          #hero > div:nth-last-child(2) { right: auto !important; left: 50% !important; transform: translateX(-50%) !important; bottom: 160px !important; }
+        }
+        @media (max-width: 480px) {
+          #hero > div:nth-last-child(2) { display: none !important; }
+        }
+      `}</style>
     </section>
   );
 };
@@ -253,7 +267,7 @@ const styles: Record<string, React.CSSProperties> = {
   hero: {
     position: 'relative',
     height: '100vh',
-    minHeight: 600,
+    minHeight: 500,
     overflow: 'hidden',
     background: '#0a0a0a',
   },
@@ -323,7 +337,7 @@ const styles: Record<string, React.CSSProperties> = {
     marginBottom: 16,
   },
   slideTitle: {
-    fontFamily: "'Playfair Display', serif",
+    fontFamily: "'Cormorant Garamond', serif",
     fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
     fontWeight: 500,
     lineHeight: 1.1,
@@ -441,20 +455,5 @@ const styles: Record<string, React.CSSProperties> = {
   },
 };
 
-const heroStyles = document.createElement('style');
-heroStyles.textContent = `
-  @keyframes scrollPulse {
-    0%, 100% { opacity: 0.3; transform: scaleY(0.6); }
-    50% { opacity: 1; transform: scaleY(1); }
-  }
-  @media (max-width: 768px) {
-    #hero .hero-scroll { display: none !important; }
-    #hero > div:nth-last-child(2) { right: auto !important; left: 50% !important; transform: translateX(-50%) !important; bottom: 160px !important; }
-  }
-  @media (max-width: 480px) {
-    #hero > div:nth-last-child(2) { display: none !important; }
-  }
-`;
-document.head.appendChild(heroStyles);
 
 export default Hero;

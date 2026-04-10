@@ -53,7 +53,7 @@ const styles: Record<string, React.CSSProperties> = {
     width: 'fit-content',
   },
   item: {
-    fontFamily: "'Playfair Display', serif",
+    fontFamily: "'Cormorant Garamond', serif",
     fontSize: 'clamp(1.5rem, 4vw, 3rem)',
     fontWeight: 400,
     color: 'rgba(201,169,110,0.15)',

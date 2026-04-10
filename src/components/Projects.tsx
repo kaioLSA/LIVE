@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { animateHeadingReveal, animateLabelReveal } from '../utils/textReveal';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -75,17 +76,38 @@ const Projects: React.FC = () => {
 
   useEffect(() => {
     if (!sectionRef.current) return;
+    const section = sectionRef.current;
 
+    // Label typography
+    const label = section.querySelector('.proj-label') as HTMLElement;
+    if (label) animateLabelReveal(label, section);
+
+    // Heading word reveal
+    const heading = section.querySelector('.proj-heading') as HTMLElement;
+    if (heading) animateHeadingReveal(heading, section);
+
+    // Subtitle fade
     gsap.fromTo(
-      sectionRef.current.querySelectorAll('.proj-header'),
-      { y: 50, opacity: 0 },
+      section.querySelector('.proj-subtitle'),
+      { y: 30, opacity: 0 },
       {
-        y: 0, opacity: 1, stagger: 0.1, duration: 0.8, ease: 'power3.out',
-        scrollTrigger: { trigger: sectionRef.current, start: 'top 75%' },
+        y: 0, opacity: 1,
+        scrollTrigger: { trigger: section, start: 'top 70%', end: 'top 45%', scrub: 1 },
+      }
+    );
+
+    // Filter buttons slide in
+    gsap.fromTo(
+      section.querySelectorAll('.proj-filter-btn'),
+      { y: 20, opacity: 0 },
+      {
+        y: 0, opacity: 1, stagger: 0.04,
+        scrollTrigger: { trigger: section, start: 'top 65%', end: 'top 40%', scrub: 1 },
       }
     );
   }, []);
 
+  // Cards animate on filter change (these stay non-scrub since they're user-triggered)
   useEffect(() => {
     if (!cardsRef.current) return;
     gsap.fromTo(
@@ -98,20 +120,21 @@ const Projects: React.FC = () => {
   return (
     <section ref={sectionRef} id="projects" style={styles.section}>
       <div style={styles.container}>
-        <div className="proj-header" style={styles.header}>
+        <div style={styles.header}>
           <div>
-            <span style={styles.label}>PORTFOLIO</span>
-            <h2 style={styles.title}>Nossos <em style={styles.italic}>Projetos</em></h2>
+            <span className="proj-label" style={styles.label}>PORTFOLIO</span>
+            <h2 className="proj-heading" style={styles.title}>Nossos <em style={styles.italic}>Projetos</em></h2>
           </div>
-          <p style={styles.subtitle}>
+          <p className="proj-subtitle" style={styles.subtitle}>
             Cada projeto e uma narrativa unica, desenhada para superar expectativas.
           </p>
         </div>
 
-        <div className="proj-header" style={styles.filters}>
+        <div style={styles.filters}>
           {categories.map((cat) => (
             <button
               key={cat}
+              className="proj-filter-btn"
               onClick={() => setActiveFilter(cat)}
               style={{
                 ...styles.filterBtn,
@@ -173,6 +196,17 @@ const Projects: React.FC = () => {
           ))}
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 1024px) {
+          #projects > div > div:last-child { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+        @media (max-width: 600px) {
+          #projects > div > div:last-child { grid-template-columns: 1fr !important; }
+          #projects > div > div:first-child { flex-direction: column !important; align-items: flex-start !important; }
+          #projects > div > div:first-child p { text-align: left !important; }
+        }
+      `}</style>
     </section>
   );
 };
@@ -205,7 +239,7 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'block',
   },
   title: {
-    fontFamily: "'Playfair Display', serif",
+    fontFamily: "'Cormorant Garamond', serif",
     fontSize: 'clamp(2rem, 5vw, 3.5rem)',
     fontWeight: 500,
     color: '#fff',
@@ -291,7 +325,7 @@ const styles: Record<string, React.CSSProperties> = {
     letterSpacing: 0.5,
   },
   cardTitle: {
-    fontFamily: "'Playfair Display', serif",
+    fontFamily: "'Cormorant Garamond', serif",
     fontSize: '1.3rem',
     fontWeight: 500,
     color: '#fff',
@@ -323,17 +357,5 @@ const styles: Record<string, React.CSSProperties> = {
   },
 };
 
-const projStyles = document.createElement('style');
-projStyles.textContent = `
-  @media (max-width: 1024px) {
-    #projects > div > div:last-child { grid-template-columns: repeat(2, 1fr) !important; }
-  }
-  @media (max-width: 600px) {
-    #projects > div > div:last-child { grid-template-columns: 1fr !important; }
-    #projects > div > div:first-child { flex-direction: column !important; align-items: flex-start !important; }
-    #projects > div > div:first-child p { text-align: left !important; }
-  }
-`;
-document.head.appendChild(projStyles);
 
 export default Projects;
