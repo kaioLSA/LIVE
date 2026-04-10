@@ -236,7 +236,7 @@ const styles: Record<string, React.CSSProperties> = {
   serviceTitle: { fontFamily: "'Cormorant Garamond', serif", fontSize: '2rem', fontWeight: 500, color: '#fff', marginBottom: 20 },
   serviceDesc: { fontSize: '1rem', color: '#999', lineHeight: 1.8, marginBottom: 32 },
   progressBar: { width: '100%', height: 2, background: '#2a2a2a', borderRadius: 1 },
-  progressFill: { height: '100%', background: '#c9a96e', borderRadius: 1, transition: 'width 0.5s ease' },
+  progressFill: { height: '100%', background: '#8B2335', borderRadius: 1, transition: 'width 0.5s ease' },
 
   // Mobile tabs
   tabsScroll: {

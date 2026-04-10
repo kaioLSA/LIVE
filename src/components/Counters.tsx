@@ -153,7 +153,7 @@ const styles: Record<string, React.CSSProperties> = {
   divider: {
     width: 40,
     height: 2,
-    background: '#c9a96e',
+    background: '#8B2335',
     margin: '0 auto 16px',
     transformOrigin: 'center',
   },

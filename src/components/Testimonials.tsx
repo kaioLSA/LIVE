@@ -176,7 +176,7 @@ const styles: Record<string, React.CSSProperties> = {
     background: '#1a1a1a',
     padding: '48px 40px',
     position: 'relative',
-    borderLeft: '3px solid #c9a96e',
+    borderLeft: '3px solid #8B2335',
   },
   quoteIcon: {
     fontFamily: "'Cormorant Garamond', serif",

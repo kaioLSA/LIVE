@@ -143,7 +143,7 @@ const styles: Record<string, React.CSSProperties> = {
   img: { width: '100%', height: '100%', objectFit: 'cover' as const, transition: 'all 0.5s ease' },
   overlay: { position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(10,10,10,0.95) 0%, transparent 50%)', display: 'flex', flexDirection: 'column' as const, justifyContent: 'flex-end', padding: 24, transition: 'opacity 0.4s ease' },
   bio: { fontSize: '0.85rem', color: '#ccc', lineHeight: 1.6 },
-  goldBar: { position: 'absolute', bottom: 0, left: 0, right: 0, height: 3, background: '#c9a96e' },
+  goldBar: { position: 'absolute', bottom: 0, left: 0, right: 0, height: 3, background: '#8B2335' },
   yearsBadge: { position: 'absolute', top: 16, right: 16, background: 'rgba(10,10,10,0.7)', backdropFilter: 'blur(10px)', padding: '6px 14px', border: '1px solid rgba(201,169,110,0.3)' },
   yearsText: { fontSize: '0.7rem', fontWeight: 600, letterSpacing: 1, color: '#c9a96e', textTransform: 'uppercase' as const },
   info: { textAlign: 'center' as const },

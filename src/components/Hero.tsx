@@ -444,13 +444,13 @@ const styles: Record<string, React.CSSProperties> = {
   scrollLine: {
     width: 1,
     height: 50,
-    background: 'linear-gradient(to bottom, #c9a96e, transparent)',
+    background: 'linear-gradient(to bottom, #8B2335, transparent)',
     animation: 'scrollPulse 2s ease-in-out infinite',
   },
   scrollText: {
     fontSize: '0.6rem',
     letterSpacing: 3,
-    color: '#c9a96e',
+    color: '#8B2335',
     writingMode: 'vertical-lr' as const,
   },
 };

@@ -162,11 +162,11 @@ const Contact: React.FC = () => {
                 style={styles.submitBtn}
                 onMouseEnter={(e) => {
                   (e.target as HTMLElement).style.background = 'transparent';
-                  (e.target as HTMLElement).style.color = '#c9a96e';
+                  (e.target as HTMLElement).style.color = '#8B2335';
                 }}
                 onMouseLeave={(e) => {
-                  (e.target as HTMLElement).style.background = '#c9a96e';
-                  (e.target as HTMLElement).style.color = '#0a0a0a';
+                  (e.target as HTMLElement).style.background = '#8B2335';
+                  (e.target as HTMLElement).style.color = '#fff';
                 }}
               >
                 Enviar Mensagem
@@ -296,9 +296,9 @@ const styles: Record<string, React.CSSProperties> = {
   },
   submitBtn: {
     padding: '16px 40px',
-    background: '#c9a96e',
-    color: '#0a0a0a',
-    border: '2px solid #c9a96e',
+    background: '#8B2335',
+    color: '#fff',
+    border: '2px solid #8B2335',
     fontFamily: "'Inter', sans-serif",
     fontSize: '0.85rem',
     fontWeight: 700,
